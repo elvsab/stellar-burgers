@@ -14,6 +14,17 @@
   flex-basis: 35%;
 }
 
+.menu_item {
+  display: flex;
+  align-items: center;
+  color: var(--text-inactive-color);
+  transition: color 0.2s ease;
+}
+
+.menu_item:hover {
+  color: var(--text-primary-color);
+}
+
 .link {
   display: flex;
   text-decoration: none;
@@ -28,6 +39,12 @@
   display: flex;
   justify-content: flex-end;
   flex-basis: 35%;
+  color: var(--text-inactive-color);
+  transition: color 0.2s ease;
+}
+
+.link_position_last:hover {
+  color: var(--text-primary-color);
 }
 
 .logo {

@@ -2,9 +2,13 @@ import { ProfileUI } from '@ui-pages';
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from '../../services/store';
 import { logoutUser } from '../../services/slices/userSlice';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { updateUserApi } from '@api';
+import { setUser } from '../../services/slices/userSlice';
+import { deleteCookie } from '../../utils/cookie';
 
 export const Profile: FC = () => {
+  const { pathname } = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.user);
@@ -33,6 +37,17 @@ export const Profile: FC = () => {
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
+    updateUserApi({
+      name: formValue.name,
+      email: formValue.email,
+      ...(formValue.password ? { password: formValue.password } : {})
+    })
+      .then((res) => {
+        dispatch(setUser(res.user));
+      })
+      .catch((err) => {
+        console.error('Ошибка обновления профиля:', err);
+      });
   };
 
   const handleCancel = (e: SyntheticEvent) => {
@@ -52,8 +67,16 @@ export const Profile: FC = () => {
   };
 
   const handleLogout = async () => {
-    await dispatch(logoutUser());
-    navigate('/login');
+    try {
+      await dispatch(logoutUser());
+      deleteCookie('accessToken');
+      deleteCookie('refreshToken');
+      localStorage.clear();
+      sessionStorage.clear();
+      navigate('/login');
+    } catch (error) {
+      console.log('Ошибка при входе', error);
+    }
   };
 
   return (

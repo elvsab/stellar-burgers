@@ -32,8 +32,11 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
+        // Ignore non-serializable values in specific paths
         ignoredPaths: ['burgerConstructor'],
+        // Ignore specific action types that might cause issues
         ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+        // Ignore specific field paths in actions
         ignoredActionPaths: ['meta.arg', 'meta.baseQueryMeta']
       }
     }).concat(logger)

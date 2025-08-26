@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { getOrderByNumberApi } from '../../utils/burger-api';
 import { TOrder } from '@utils-types';
-import { RootState } from '../store';
 
 type OrderDetailsState = {
   order: TOrder | null;
@@ -61,9 +60,7 @@ export const { clearOrderDetails } = orderDetailsSlice.actions;
 
 export default orderDetailsSlice.reducer;
 
-export const selectOrderDetails = (state: RootState) =>
-  state.orderDetails.order;
-export const selectOrderDetailsLoading = (state: RootState) =>
+export const selectOrderDetails = (state: any) => state.orderDetails.order;
+export const selectOrderDetailsLoading = (state: any) =>
   state.orderDetails.isLoading;
-export const selectOrderDetailsError = (state: RootState) =>
-  state.orderDetails.error;
+export const selectOrderDetailsError = (state: any) => state.orderDetails.error;

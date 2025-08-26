@@ -6,7 +6,7 @@ import {
   selectUserError,
   selectUserLoading
 } from '../../services/slices/userSlice';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { ProtectedRoute } from '../../components/protected-route';
 
 export const Register: FC = () => {
   const [userName, setUserName] = useState('');
@@ -16,9 +16,6 @@ export const Register: FC = () => {
   const dispatch = useDispatch();
   const loading = useSelector(selectUserLoading);
   const errorText = useSelector(selectUserError);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = (location.state as any)?.from?.pathname || '/profile';
 
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
@@ -26,20 +23,21 @@ export const Register: FC = () => {
       await dispatch(
         registerUser({ name: userName, email, password })
       ).unwrap();
-      navigate(from, { replace: true });
     } catch {}
   };
 
   return (
-    <RegisterUI
-      errorText={errorText || ''}
-      email={email}
-      userName={userName}
-      password={password}
-      setEmail={setEmail}
-      setPassword={setPassword}
-      setUserName={setUserName}
-      handleSubmit={handleSubmit}
-    />
+    <ProtectedRoute onlyUnAuth>
+      <RegisterUI
+        errorText={errorText || ''}
+        email={email}
+        userName={userName}
+        password={password}
+        setEmail={setEmail}
+        setPassword={setPassword}
+        setUserName={setUserName}
+        handleSubmit={handleSubmit}
+      />
+    </ProtectedRoute>
   );
 };

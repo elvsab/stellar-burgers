@@ -1,6 +1,11 @@
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { ConstructorPage } from '@pages';
 import { ProtectedRoute } from '@components';
+import { useEffect } from 'react';
+import { fetchIngredients } from '../../services/slices/ingredientsSlice';
+import { useDispatch, useSelector } from '../../services/store';
+import { fetchUser, selectUserLoading } from '../../services/slices/userSlice';
+import { Preloader } from '../ui/preloader';
 
 import { Feed } from '@pages';
 import { Login } from '@pages';
@@ -25,6 +30,13 @@ const App = () => {
   const state = location.state as { background?: Location };
   const background = state?.background;
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const userLoading = useSelector(selectUserLoading);
+
+  useEffect(() => {
+    dispatch(fetchIngredients());
+    dispatch(fetchUser());
+  }, [dispatch]);
 
   return (
     <div className={styles.app}>

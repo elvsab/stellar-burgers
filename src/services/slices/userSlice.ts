@@ -9,17 +9,20 @@ import {
   TLoginData
 } from '../../utils/burger-api';
 import { getCookie, setCookie, deleteCookie } from '../../utils/cookie';
+import { stat } from 'fs';
 
 type UserState = {
   user: TUser | null;
   isAuth: boolean;
+  isAuthChecked: boolean;
   loading: boolean;
   error: string | null;
 };
 
 const initialState: UserState = {
   user: null,
-  isAuth: Boolean(getCookie('accessToken')),
+  isAuth: false,
+  isAuthChecked: false,
   loading: false,
   error: null
 };
@@ -109,6 +112,7 @@ const userSlice = createSlice({
         state.loading = false;
         state.user = action.payload;
         state.isAuth = true;
+        state.isAuthChecked = true;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
@@ -123,6 +127,7 @@ const userSlice = createSlice({
         state.loading = false;
         state.user = action.payload;
         state.isAuth = true;
+        state.isAuthChecked = true;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -137,16 +142,19 @@ const userSlice = createSlice({
         state.loading = false;
         state.user = action.payload;
         state.isAuth = true;
+        state.isAuthChecked = true;
       })
       .addCase(fetchUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Ошибка получения пользователя';
         state.isAuth = false;
+        state.isAuthChecked = true;
       })
 
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.isAuth = false;
+        state.isAuthChecked = true;
       });
   }
 });
@@ -159,3 +167,5 @@ export const selectIsAuth = (state: { user: UserState }) => state.user.isAuth;
 export const selectUserLoading = (state: { user: UserState }) =>
   state.user.loading;
 export const selectUserError = (state: { user: UserState }) => state.user.error;
+export const selectIsAuthChecked = (state: { user: UserState }) =>
+  state.user.isAuthChecked;

@@ -17,9 +17,14 @@ export const FeedInfo: FC = () => {
   const orders = useSelector(selectFeedOrders);
   const feed = useSelector(selectFeedTotals);
 
-  const readyOrders = getOrders(orders, 'done');
+  console.log('FeedInfo - orders:', orders);
+  console.log('FeedInfo - feed:', feed);
 
+  const readyOrders = getOrders(orders, 'done');
   const pendingOrders = getOrders(orders, 'pending');
+
+  console.log('FeedInfo - readyOrders:', readyOrders);
+  console.log('FeedInfo - pendingOrders:', pendingOrders);
 
   return (
     <FeedInfoUI

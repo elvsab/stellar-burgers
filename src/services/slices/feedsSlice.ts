@@ -1,10 +1,14 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  PayloadAction,
+  createSelector
+} from '@reduxjs/toolkit';
 import { getFeedsApi } from '../../utils/burger-api';
 import { TOrder, TOrdersData } from '@utils-types';
-import { RootState } from '../store';
 
 type FeedsState = {
-  orders: TOrder[];
+  items: TOrder[];
   total: number;
   totalToday: number;
   isLoading: boolean;
@@ -12,7 +16,7 @@ type FeedsState = {
 };
 
 const initialState: FeedsState = {
-  orders: [],
+  items: [],
   total: 0,
   totalToday: 0,
   isLoading: false,
@@ -49,7 +53,7 @@ const feedsSlice = createSlice({
       .addCase(
         fetchFeeds.fulfilled,
         (state, action: PayloadAction<TOrdersData>) => {
-          state.orders = action.payload.orders;
+          state.items = action.payload.orders;
           state.total = action.payload.total;
           state.totalToday = action.payload.totalToday;
           state.isLoading = false;
@@ -64,9 +68,9 @@ const feedsSlice = createSlice({
 
 export default feedsSlice.reducer;
 
-export const selectFeeds = (state: RootState) => state.feeds;
-export const selectFeedOrders = (state: RootState) => state.feeds.orders;
-export const selectFeedTotals = (state: RootState) => ({
+export const selectFeeds = (state: any) => state.feeds;
+export const selectFeedOrders = (state: any) => state.feeds.items;
+export const selectFeedTotals = (state: any) => ({
   total: state.feeds.total,
   totalToday: state.feeds.totalToday
 });

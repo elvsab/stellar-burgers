@@ -1,4 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
+import ingredientsReducer from './slices/ingredientsSlice';
+import constructorReducer from './slices/constructorSlice';
+import orderReducer from './slices/orderSlice';
+import userReducer from './slices/userSlice';
+import feedsReducer from './slices/feedsSlice';
+import userOrdersReducer from './slices/userOrdersSlice';
+import orderDetailsReducer from './slices/orderDetailsSlice';
+import { createLogger } from 'redux-logger';
 
 import {
   TypedUseSelectorHook,
@@ -6,18 +14,39 @@ import {
   useSelector as selectorHook
 } from 'react-redux';
 
-const rootReducer = () => {}; // Заменить на импорт настоящего редьюсера
+const logger = createLogger();
+
+const rootReducer = {
+  ingredients: ingredientsReducer,
+  burgerConstructor: constructorReducer,
+  order: orderReducer,
+  user: userReducer,
+  feeds: feedsReducer,
+  userOrders: userOrdersReducer,
+  orderDetails: orderDetailsReducer
+};
 
 const store = configureStore({
   reducer: rootReducer,
-  devTools: process.env.NODE_ENV !== 'production'
+  devTools: process.env.NODE_ENV !== 'production',
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        // Ignore non-serializable values in specific paths
+        ignoredPaths: ['burgerConstructor'],
+        // Ignore specific action types that might cause issues
+        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+        // Ignore specific field paths in actions
+        ignoredActionPaths: ['meta.arg', 'meta.baseQueryMeta']
+      }
+    }).concat(logger)
 });
 
-export type RootState = ReturnType<typeof rootReducer>;
+export type RootState = ReturnType<typeof store.getState>;
 
 export type AppDispatch = typeof store.dispatch;
 
-export const useDispatch: () => AppDispatch = () => dispatchHook();
+export const useDispatch: () => AppDispatch = dispatchHook as () => AppDispatch;
 export const useSelector: TypedUseSelectorHook<RootState> = selectorHook;
 
 export default store;

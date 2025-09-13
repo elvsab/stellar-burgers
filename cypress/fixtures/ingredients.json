@@ -1,0 +1,43 @@
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "bun-1",
+      "name": "Краторная булка N-200i",
+      "type": "bun",
+      "proteins": 80,
+      "fat": 24,
+      "carbohydrates": 53,
+      "calories": 420,
+      "price": 1255,
+      "image": "/assets/bun1.png",
+      "image_large": "/assets/bun1-large.png"
+    },
+    {
+      "_id": "main-1",
+      "name": "Мясо бессмертных моллюсков Protostomia",
+      "type": "main",
+      "proteins": 433,
+      "fat": 244,
+      "carbohydrates": 33,
+      "calories": 420,
+      "price": 3000,
+      "image": "/assets/main1.png",
+      "image_large": "/assets/main1-large.png"
+    },
+    {
+      "_id": "sauce-1",
+      "name": "Соус Spicy-X",
+      "type": "sauce",
+      "proteins": 30,
+      "fat": 20,
+      "carbohydrates": 40,
+      "calories": 100,
+      "price": 90,
+      "image": "/assets/sauce1.png",
+      "image_large": "/assets/sauce1-large.png"
+    }
+  ]
+}
+
+

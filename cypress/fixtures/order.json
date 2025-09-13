@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "name": "Space флюоресцентный бургер",
+  "order": {
+    "number": 12345,
+    "_id": "order-1",
+    "ingredients": ["bun-1", "main-1", "sauce-1", "bun-1"],
+    "status": "done",
+    "name": "Space флюоресцентный бургер",
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "updatedAt": "2025-01-01T00:00:00.000Z"
+  }
+}
+
+

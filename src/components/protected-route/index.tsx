@@ -12,6 +12,7 @@ export const ProtectedRoute = ({ children, onlyUnAuth = false }: Props) => {
   const { user, isAuth, isAuthChecked } = useSelector(
     (state: RootState) => state.user
   );
+  // const isAuth = useSelector((state) => state.user.isAuth);
   const location = useLocation();
 
   if (!isAuthChecked) {
@@ -20,7 +21,7 @@ export const ProtectedRoute = ({ children, onlyUnAuth = false }: Props) => {
 
   if (onlyUnAuth && isAuth) {
     const { from } = (location.state as any) || { from: { pathname: '/' } };
-    return <Navigate to={from.pathname} replace />;
+    return <Navigate to={from} replace />;
   }
 
   if (!onlyUnAuth && !isAuth) {

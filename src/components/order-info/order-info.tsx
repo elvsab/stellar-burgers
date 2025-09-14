@@ -1,37 +1,32 @@
 import { FC, useMemo, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
-import { TIngredient, TOrder } from '@utils-types';
-import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from '../../services/store';
+import { TIngredient } from '@utils-types';
+import { useSelector, useDispatch } from '../../services/store';
 import {
-  fetchOrderByNumber,
-  selectOrderDetails
+  selectOrderDetails,
+  selectOrderDetailsLoading,
+  selectOrderDetailsError
 } from '../../services/slices/orderDetailsSlice';
-import {
-  selectAllIngredients,
-  fetchIngredients
-} from '../../services/slices/ingredientsSlice';
+import { selectAllIngredients } from '../../services/slices/ingredientsSlice';
+import { fetchOrderByNumber } from '../../services/slices/orderDetailsSlice';
 
 export const OrderInfo: FC = () => {
-  const { number } = useParams();
+  const { number } = useParams<{ number: string }>();
   const dispatch = useDispatch();
-  const orderData: TOrder | null = useSelector(selectOrderDetails);
-  const ingredients: TIngredient[] = useSelector(selectAllIngredients);
+  const orderData = useSelector(selectOrderDetails);
+  const ingredients = useSelector(selectAllIngredients);
+  const isLoading = useSelector(selectOrderDetailsLoading);
+  const error = useSelector(selectOrderDetailsError);
 
   useEffect(() => {
-    const num = Number(number);
-    if (!orderData && !Number.isNaN(num)) {
-      dispatch(fetchOrderByNumber(num));
+    if (number) {
+      dispatch(fetchOrderByNumber(parseInt(number)));
     }
   }, [dispatch, number]);
 
-  useEffect(() => {
-    if (!ingredients.length) {
-      dispatch(fetchIngredients());
-    }
-  }, [dispatch, ingredients.length]);
-
+  /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
 
@@ -44,7 +39,9 @@ export const OrderInfo: FC = () => {
     const ingredientsInfo = orderData.ingredients.reduce(
       (acc: TIngredientsWithCount, item: string) => {
         if (!acc[item]) {
-          const ingredient = ingredients.find((ing) => ing._id === item);
+          const ingredient = ingredients.find(
+            (ing: TIngredient) => ing._id === item
+          );
           if (ingredient) {
             acc[item] = {
               ...ingredient,
@@ -60,7 +57,9 @@ export const OrderInfo: FC = () => {
       {} as TIngredientsWithCount
     );
 
-    const total = Object.values(ingredientsInfo).reduce(
+    const total = (
+      Object.values(ingredientsInfo) as (TIngredient & { count: number })[]
+    ).reduce(
       (acc: number, item: TIngredient & { count: number }) =>
         acc + item.price * item.count,
       0
@@ -73,6 +72,14 @@ export const OrderInfo: FC = () => {
       total
     };
   }, [orderData, ingredients]);
+
+  if (isLoading) {
+    return <Preloader />;
+  }
+
+  if (error) {
+    return <div>Ошибка загрузки заказа: {error}</div>;
+  }
 
   if (!orderInfo) {
     return <Preloader />;

@@ -3,6 +3,12 @@
 const API_URL =
   Cypress.env('BURGER_API_URL') || 'https://norma.nomoreparties.space/api';
 
+const SELECTORS = {
+  INGREDIENT_CARD: '[data-test="ingredient-card"]',
+  CLOSE_MODAL: '[data-cy="close-modal"]',
+  MODAL: '[data-cy="modal"]'
+};
+
 describe('Burger app core flows', () => {
   beforeEach(() => {
     cy.intercept('GET', `${API_URL}/ingredients`, {
@@ -20,12 +26,11 @@ describe('Burger app core flows', () => {
 
   it('adds ingredient to constructor from list', () => {
     // Click first bun "Добавить"
-    cy.contains(
-      '[data-test="ingredient-card"]',
-      'Краторная булка N-200i'
-    ).within(() => {
-      cy.contains('button', 'Добавить').click();
-    });
+    cy.contains(SELECTORS.INGREDIENT_CARD, 'Краторная булка N-200i').within(
+      () => {
+        cy.contains('button', 'Добавить').click();
+      }
+    );
 
     // Top and bottom bun placeholders should be filled
     cy.contains('Выберите булки').should('not.exist');
@@ -47,9 +52,9 @@ describe('Burger app core flows', () => {
     // Try to close via close icon button if present, fallback to back
     cy.location('pathname').then((path) => {
       if (path.includes('/ingredients/')) {
-        const hasClose = Cypress.$('[data-cy="close-modal"]').length > 0;
+        const hasClose = Cypress.$(SELECTORS.CLOSE_MODAL).length > 0;
         if (hasClose) {
-          cy.get('[data-cy="close-modal"]').click({ force: true });
+          cy.get(SELECTORS.CLOSE_MODAL).click({ force: true });
           cy.location('pathname').should('eq', '/');
         } else {
           cy.go('back');
@@ -77,14 +82,13 @@ describe('Burger app core flows', () => {
     cy.wait('@getUserAuthed');
 
     // Add bun and main
+    cy.contains(SELECTORS.INGREDIENT_CARD, 'Краторная булка N-200i').within(
+      () => {
+        cy.contains('button', 'Добавить').click();
+      }
+    );
     cy.contains(
-      '[data-test="ingredient-card"]',
-      'Краторная булка N-200i'
-    ).within(() => {
-      cy.contains('button', 'Добавить').click();
-    });
-    cy.contains(
-      '[data-test="ingredient-card"]',
+      SELECTORS.INGREDIENT_CARD,
       'Мясо бессмертных моллюсков Protostomia'
     ).within(() => {
       cy.contains('button', 'Добавить').click();
@@ -96,7 +100,7 @@ describe('Burger app core flows', () => {
     cy.wait('@postOrder');
 
     // Modal with order number
-    cy.get('[data-cy="modal"]').within(() => {
+    cy.get(SELECTORS.MODAL).within(() => {
       cy.get('h2')
         .invoke('text')
         .should((text) => {
@@ -105,8 +109,8 @@ describe('Burger app core flows', () => {
     });
 
     // Close order modal
-    cy.get('[data-cy="close-modal"]').click({ force: true });
-    cy.get('[data-cy="modal"]').should('not.exist');
+    cy.get(SELECTORS.CLOSE_MODAL).click({ force: true });
+    cy.get(SELECTORS.MODAL).should('not.exist');
 
     // Constructor is cleared
     cy.get('[data-cy="constructor"]').within(() => {
